@@ -35,7 +35,7 @@ function AddStudentPage() {
         const signer = web3Provider.getSigner();
         setProvider(web3Provider);
 
-        const studentManagementAddress = '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0';
+        const studentManagementAddress = '';
         const studentManagementABI = [
           "function addStudent(uint256 _id, string memory _nom, string memory _prenom, string memory _dateDeNaissance, string memory _codeMassar, string memory _photo, string memory _statutAcademique, string memory _experiencesProfessionnelles) public",
         ];
@@ -59,7 +59,7 @@ function AddStudentPage() {
     if (contract) {
       try {
         setIsSubmitting(true);
-        const tx = await contract.addStudent(
+        const _tx = await contract.addStudent(
           studentId,
           nom,
           prenom,
@@ -69,9 +69,11 @@ function AddStudentPage() {
           statutAcademique,
           experiencesProfessionnelles
         );
+        const tx = await _tx.getTransaction();
   
         const receipt = await tx.wait();
   
+        // Vérification du statut de la transaction
         if (receipt.status === 1) {
           console.log('Transaction successful');
           alert('Étudiant ajouté avec succès');
@@ -87,6 +89,7 @@ function AddStudentPage() {
       }
     }
   };
+  
 
   return (
     <div className="container-fluid bg-light py-5">
@@ -221,21 +224,19 @@ function AddStudentPage() {
 
               <div className="text-center mt-4">
                 <button 
+                  type="button" 
                   onClick={addStudent} 
                   disabled={isSubmitting}
                   className="btn btn-primary btn-lg d-flex align-items-center justify-content-center mx-auto"
                 >
                   {isSubmitting ? (
-                    <>
-                      <div className="spinner-border spinner-border-sm me-2" role="status">
-                        <span className="visually-hidden">Chargement...</span>
-                      </div>
-                      Ajout en cours...
-                    </>
+                    <div className="spinner-border spinner-border-sm me-2" role="status">
+                      <span className="visually-hidden">Chargement...</span>
+                    </div>
                   ) : (
                     <>
                       <Upload className="me-2" size={20} />
-                      Ajouter l'Étudiant
+                      Ajouter Étudiant
                     </>
                   )}
                 </button>

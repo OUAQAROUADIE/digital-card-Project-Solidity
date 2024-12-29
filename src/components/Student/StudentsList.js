@@ -1,5 +1,3 @@
-
-       
         import React, { useState, useEffect } from "react";
         import { ethers } from "ethers";
         import { Web3Provider } from '@ethersproject/providers';
@@ -21,7 +19,7 @@
                 setAccount(await signer.getAddress()); // Récupérer l'adresse du portefeuille connecté
         
                 // Adresse et ABI de votre contrat
-                const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+                const contractAddress = "";
                const contractABI = [
                   // Ajoutez ici l'ABI complète de votre contrat
                   "function getAllStudents() public view returns (tuple(uint256 id, string memory nom, string memory prenom, string memory dateDeNaissance, string memory codeMassar, string memory photo, string memory statutAcademique, string memory experiencesProfessionnelles)[] memory)"

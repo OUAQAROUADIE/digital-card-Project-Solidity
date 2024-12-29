@@ -6,6 +6,7 @@ import "./RoleManager.sol";
 contract StudentManagement {
     RoleManager private roleManager;
 
+
     struct Student {
         uint256 id;
         string nom;
@@ -15,17 +16,19 @@ contract StudentManagement {
         string photo;
         string statutAcademique;
         string experiencesProfessionnelles;
-        string stageAttestationHash;
-        string schoolAttestationHash;
     }
 
     mapping(uint256 => Student) private students;
+    mapping(uint256 => string[]) private stageAttestations; // Mapping for multiple stage attestations
+    mapping(uint256 => string[]) private schoolAttestations; // Mapping for multiple school attestations
     uint256 public studentCount;
     uint256[] public studentIds;
 
     event StudentAdded(uint256 id, string nom, string prenom);
     event StudentUpdated(uint256 id, string nom, string prenom);
     event StudentDeleted(uint256 id);
+    event StageAttestationAdded(uint256 indexed studentId, string ipfsHash);
+    event SchoolAttestationAdded(uint256 indexed studentId, string ipfsHash);
 
     modifier onlyAdmin() {
         require(roleManager.isAdmin(msg.sender), "Access denied: Only admins can perform this action.");
@@ -63,14 +66,47 @@ contract StudentManagement {
             codeMassar: _codeMassar,
             photo: _photo,
             statutAcademique: _statutAcademique,
-            experiencesProfessionnelles: _experiencesProfessionnelles,
-            stageAttestationHash: "",
-            schoolAttestationHash: ""
+            experiencesProfessionnelles: _experiencesProfessionnelles
         });
 
         studentIds.push(_id);
         studentCount++;
         emit StudentAdded(_id, _nom, _prenom);
+    }
+        // Vérifier si un étudiant existe
+    function studentExists(uint256 _id) public view returns (bool) {
+        return students[_id].id != 0;
+    }
+
+
+    // Ajouter une attestation de stage pour un étudiant
+    function addStageAttestation(uint256 _id, string memory _ipfsHash) public onlyAdmin {
+        require(students[_id].id != 0, "Student does not exist.");
+        require(bytes(_ipfsHash).length > 0, "Invalid IPFS hash.");
+
+        stageAttestations[_id].push(_ipfsHash);
+        emit StageAttestationAdded(_id, _ipfsHash);
+    }
+
+    // Ajouter une attestation scolaire pour un étudiant
+    function addSchoolAttestation(uint256 _id, string memory _ipfsHash) public onlyAdmin {
+        require(students[_id].id != 0, "Student does not exist.");
+        require(bytes(_ipfsHash).length > 0, "Invalid IPFS hash.");
+
+        schoolAttestations[_id].push(_ipfsHash);
+        emit SchoolAttestationAdded(_id, _ipfsHash);
+    }
+
+    // Récupérer toutes les attestations de stage d'un étudiant
+    function getStageAttestations(uint256 _id) public view onlyUser returns (string[] memory) {
+        require(students[_id].id != 0, "Student does not exist.");
+        return stageAttestations[_id];
+    }
+
+    // Récupérer toutes les attestations scolaires d'un étudiant
+    function getSchoolAttestations(uint256 _id) public view onlyUser returns (string[] memory) {
+        require(students[_id].id != 0, "Student does not exist.");
+        return schoolAttestations[_id];
     }
 
     // Mettre à jour un étudiant (Admin uniquement)
@@ -97,6 +133,8 @@ contract StudentManagement {
         require(students[_id].id != 0, "Student does not exist.");
 
         delete students[_id];
+        delete stageAttestations[_id];
+        delete schoolAttestations[_id];
         studentCount--;
 
         emit StudentDeleted(_id);
@@ -119,25 +157,3 @@ contract StudentManagement {
         return allStudents;
     }
 }
-
-
-
-    // Fonction pour récupérer l'attestation de stage
-/*function addStageAttestation(uint256 _id, string memory ipfsHash) public {
-    require(students[_id].id != 0, "Student does not exist.");
-    require(bytes(ipfsHash).length > 0, "Invalid IPFS hash.");
-    students[_id].stageAttestationHash = ipfsHash;
-    emit StageAttestationAdded(_id, ipfsHash);
-}
-
-function addSchoolAttestation(uint256 _id, string memory ipfsHash) public {
-    require(students[_id].id != 0, "Student does not exist.");
-    require(bytes(ipfsHash).length > 0, "Invalid IPFS hash.");
-    students[_id].schoolAttestationHash = ipfsHash;
-    emit SchoolAttestationAdded(_id, ipfsHash);
-}*/
-
-
-
-
-

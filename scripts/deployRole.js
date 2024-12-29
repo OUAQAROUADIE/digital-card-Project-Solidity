@@ -13,7 +13,7 @@ async function main() {
     await roleManager.waitForDeployment();
 
     // Affichage de l'adresse du contrat déployé
-    console.log("StudentManagement deployed to:", roleManager.target);
+    console.log("RoleManager deployed to:", roleManager.target);
 }
 
 // Gérer les erreurs et exécuter la fonction principale

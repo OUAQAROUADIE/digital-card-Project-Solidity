@@ -23,7 +23,7 @@ function StudentManagement() {
         const signer = web3Provider.getSigner(); // Retrieve the signer
         setProvider(web3Provider);
 
-        const studentManagementAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+        const studentManagementAddress = "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0";
         const studentManagementABI = [
           "function addStudent(uint256 _id, string memory _nom, string memory _prenom, string memory _dateDeNaissance, string memory _codeMassar, string memory _photo, string memory _statutAcademique, string memory _experiencesProfessionnelles) public",
           "function updateStudent(uint256 _id, string memory _statutAcademique, string memory _experiencesProfessionnelles) public",

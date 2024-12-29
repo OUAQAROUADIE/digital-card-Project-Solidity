@@ -20,43 +20,39 @@ contract RoleManager {
         _;
     }
 
-    modifier onlyUser() {
-        require(users[msg.sender] || admins[msg.sender], "Access denied: You are not a user.");
-        _;
-    }
-
     constructor() {
         owner = msg.sender;
-        admins[msg.sender] = true; // Le déployeur devient admin par défaut
+        admins[msg.sender] = true; // The deployer becomes an admin by default
     }
 
-    // Ajouter un admin
+    function transferOwnership(address newOwner) public onlyOwner {
+        require(newOwner != address(0), "Invalid new owner address");
+        owner = newOwner;
+        admins[newOwner] = true;
+    }
+
     function addAdmin(address _admin) public onlyOwner {
         require(_admin != address(0), "Invalid admin address.");
         admins[_admin] = true;
         emit AdminAdded(_admin);
     }
 
-    // Supprimer un admin
     function removeAdmin(address _admin) public onlyOwner {
         require(admins[_admin], "Address is not an admin.");
         admins[_admin] = false;
         emit AdminRemoved(_admin);
     }
 
-    // Ajouter un user
     function addUser(address _user) public onlyAdmin {
         require(_user != address(0), "Invalid user address.");
         users[_user] = true;
         emit UserAdded(_user);
     }
 
-    // Vérifier si une adresse est un admin
     function isAdmin(address _address) public view returns (bool) {
         return admins[_address];
     }
 
-    // Vérifier si une adresse est un user
     function isUser(address _address) public view returns (bool) {
         return users[_address];
     }
